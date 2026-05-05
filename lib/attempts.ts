@@ -13,6 +13,8 @@ export interface TaskAttempt {
   score: number;
   /** Whether the entire task was solved. */
   passed: boolean;
+  /** Whether this attempt was skipped in learn mode. */
+  skipped?: boolean;
   /** Unix ms timestamp. */
   ts: number;
 }
@@ -37,6 +39,7 @@ function safeRead(key: string): TaskAttempt[] {
         typeof a.score === "number" &&
         typeof a.max === "number" &&
         typeof a.passed === "boolean" &&
+        (a.skipped === undefined || typeof a.skipped === "boolean") &&
         typeof a.ts === "number",
     );
   } catch {
@@ -57,23 +60,42 @@ function safeWrite(key: string, value: TaskAttempt[]): void {
 export interface AttemptStats {
   total: number;
   passed: number;
+  failed: number;
+  skipped: number;
   successRate: number; // 0..100
+  failedRate: number; // 0..100
+  skippedRate: number; // 0..100
   scoreRate: number; // 0..100, fraction of correct fields across attempts
   lastAttempt?: TaskAttempt;
 }
 
 export function summarize(attempts: TaskAttempt[]): AttemptStats {
   if (attempts.length === 0) {
-    return { total: 0, passed: 0, successRate: 0, scoreRate: 0 };
+    return {
+      total: 0,
+      passed: 0,
+      failed: 0,
+      skipped: 0,
+      successRate: 0,
+      failedRate: 0,
+      skippedRate: 0,
+      scoreRate: 0,
+    };
   }
-  const passed = attempts.filter((a) => a.passed).length;
+  const skipped = attempts.filter((a) => a.skipped).length;
+  const passed = attempts.filter((a) => a.passed && !a.skipped).length;
+  const failed = attempts.length - passed - skipped;
   const totalScore = attempts.reduce((acc, a) => acc + a.score, 0);
   const totalMax = attempts.reduce((acc, a) => acc + a.max, 0);
   const last = attempts.reduce((a, b) => (a.ts > b.ts ? a : b));
   return {
     total: attempts.length,
     passed,
+    failed,
+    skipped,
     successRate: Math.round((passed / attempts.length) * 100),
+    failedRate: Math.round((failed / attempts.length) * 100),
+    skippedRate: Math.round((skipped / attempts.length) * 100),
     scoreRate: totalMax === 0 ? 0 : Math.round((totalScore / totalMax) * 100),
     lastAttempt: last,
   };
@@ -81,6 +103,18 @@ export function summarize(attempts: TaskAttempt[]): AttemptStats {
 
 export function readAttempts(courseId: string, taskKind: string): TaskAttempt[] {
   return safeRead(storageKey(courseId, taskKind));
+}
+
+export function recordTaskAttempt(
+  courseId: string,
+  taskKind: string,
+  attempt: Omit<TaskAttempt, "ts">,
+): TaskAttempt[] {
+  const key = storageKey(courseId, taskKind);
+  const next: TaskAttempt = { ...attempt, ts: Date.now() };
+  const list = [...safeRead(key), next].slice(-200);
+  safeWrite(key, list);
+  return list;
 }
 
 export function useTaskAttempts(courseId: string, taskKind: string) {
@@ -99,12 +133,10 @@ export function useTaskAttempts(courseId: string, taskKind: string) {
 
   const record = useCallback(
     (attempt: Omit<TaskAttempt, "ts">) => {
-      const next: TaskAttempt = { ...attempt, ts: Date.now() };
-      const list = [...safeRead(key), next].slice(-200); // cap history
-      safeWrite(key, list);
+      const list = recordTaskAttempt(courseId, taskKind, attempt);
       setAttempts(list);
     },
-    [key],
+    [courseId, taskKind],
   );
 
   const reset = useCallback(() => {

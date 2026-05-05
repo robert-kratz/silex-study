@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { Progress } from "@/components/ui/progress";
+import { AttemptProgressBar } from "@/components/attempt-progress-bar";
 import { Badge } from "@/components/ui/badge";
 import { readAttempts, summarize, type AttemptStats } from "@/lib/attempts";
 
@@ -67,10 +67,14 @@ function TaskListEntry({
           )}
         </div>
         <div className="mt-3 space-y-1.5">
-          <Progress value={stats?.successRate ?? 0} className="h-1.5" />
+          {stats && stats.total > 0 ? (
+            <AttemptProgressBar stats={stats} className="h-1.5" />
+          ) : (
+            <div className="h-1.5 rounded-full bg-secondary" />
+          )}
           <p className="text-xs text-muted-foreground">
             {stats && stats.total > 0
-              ? `${stats.passed} von ${stats.total} Versuchen vollständig richtig · ${stats.scoreRate}% Felder korrekt`
+              ? `${stats.passed} richtig · ${stats.failed} nicht bestanden · ${stats.skipped} übersprungen · ${stats.scoreRate}% Felder korrekt`
               : "Noch nicht bearbeitet"}
           </p>
         </div>

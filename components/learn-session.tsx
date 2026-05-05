@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { LearnRating } from "@/components/learn-rating";
-import { readAttempts, type TaskAttempt } from "@/lib/attempts";
+import { readAttempts, recordTaskAttempt, type TaskAttempt } from "@/lib/attempts";
 import { encodeTask } from "@/lib/encoding";
 import { randomSeed } from "@/lib/random";
 import {
@@ -69,6 +69,43 @@ interface CompletedEntry {
   rating: SRSRating;
   score: number;
   max: number;
+  skipped?: boolean;
+}
+
+function makeBlankAnswer() {
+  let blank: unknown;
+  const noop = function () {};
+  blank = new Proxy(noop, {
+    get(_target, prop) {
+      if (prop === Symbol.iterator) return function* () {};
+      if (prop === Symbol.toPrimitive) return () => "";
+      if (prop === "size" || prop === "length") return 0;
+      if (prop === "has") return () => false;
+      if (prop === "join" || prop === "trim" || prop === "toLowerCase") {
+        return () => "";
+      }
+      if (prop === "map") return () => [];
+      if (prop === "forEach") return () => undefined;
+      if (prop === "sort") return () => [];
+      return blank;
+    },
+    apply() {
+      return blank;
+    },
+  });
+  return blank;
+}
+
+function estimateUnansweredMax(slot: CardSlot): number {
+  try {
+    const result = slot.task.check(slot.solution, makeBlankAnswer());
+    if (Number.isFinite(result.max) && result.max > 0) return result.max;
+  } catch {
+    // Fall back to validator-derived field count below.
+  }
+
+  const validationMax = Object.keys(slot.task.validateRawInput({})).length;
+  return validationMax > 0 ? validationMax : 1;
 }
 
 export function LearnSession({
@@ -121,7 +158,12 @@ export function LearnSession({
   const total = queue.length;
   const progress = Math.round((idx / total) * 100);
 
-  const handleRate = (rating: SRSRating, score: number, max: number) => {
+  const completeCard = (
+    rating: SRSRating,
+    score: number,
+    max: number,
+    skipped = false,
+  ) => {
     setCompleted((c) => [
       ...c,
       {
@@ -130,10 +172,28 @@ export function LearnSession({
         rating,
         score,
         max,
+        skipped,
       },
     ]);
     onRate(slot.card.taskKind, rating);
     setIdx((i) => i + 1);
+  };
+
+  const handleRate = (rating: SRSRating, score: number, max: number) => {
+    completeCard(rating, score, max);
+  };
+
+  const handleSkip = () => {
+    const max = estimateUnansweredMax(slot);
+    recordTaskAttempt(courseId, slot.task.kind, {
+      seed: slot.seed,
+      v: slot.task.schemaVersion,
+      score: 0,
+      max,
+      passed: false,
+      skipped: true,
+    });
+    completeCard(0, 0, max, true);
   };
 
   return (
@@ -142,6 +202,7 @@ export function LearnSession({
         idx={idx}
         total={total}
         progress={progress}
+        onSkip={handleSkip}
         onExit={onExit}
       />
 
@@ -208,12 +269,16 @@ function SessionHistory({ completed }: { completed: CompletedEntry[] }) {
             <span className="truncate text-sm">{c.title}</span>
             <div className="flex shrink-0 items-center gap-3">
               <span className="text-xs text-muted-foreground">
-                {c.score}/{c.max}
+                {c.skipped ? "übersprungen" : `${c.score}/${c.max}`}
               </span>
               <span
-                className={`text-xs font-medium ${ratingColors[c.rating]}`}
+                className={`text-xs font-medium ${
+                  c.skipped
+                    ? "text-amber-600 dark:text-amber-300"
+                    : ratingColors[c.rating]
+                }`}
               >
-                {ratingLabels[c.rating]}
+                {c.skipped ? "Übersprungen" : ratingLabels[c.rating]}
               </span>
             </div>
           </li>
@@ -227,11 +292,13 @@ function SessionHeader({
   idx,
   total,
   progress,
+  onSkip,
   onExit,
 }: {
   idx: number;
   total: number;
   progress: number;
+  onSkip: () => void;
   onExit: () => void;
 }) {
   return (
@@ -240,9 +307,14 @@ function SessionHeader({
         <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
           Karte {idx + 1} von {total}
         </span>
-        <Button size="sm" variant="ghost" onClick={onExit}>
-          Session beenden
-        </Button>
+        <div className="flex shrink-0 items-center gap-1">
+          <Button size="sm" variant="outline" onClick={onSkip}>
+            Überspringen
+          </Button>
+          <Button size="sm" variant="ghost" onClick={onExit}>
+            Session beenden
+          </Button>
+        </div>
       </div>
       <Progress value={progress} className="h-1.5" />
     </div>
@@ -338,8 +410,32 @@ function SessionComplete({
     3: "Gut",
     5: "Einfach",
   };
-  const counts = { 0: 0, 3: 0, 5: 0 } as Record<SRSRating, number>;
-  for (const c of completed) counts[c.rating] += 1;
+  const counts = { passed: 0, failed: 0, skipped: 0 };
+  for (const c of completed) {
+    if (c.skipped) counts.skipped += 1;
+    else if (c.max > 0 && c.score >= c.max) counts.passed += 1;
+    else counts.failed += 1;
+  }
+  const summaryCards = [
+    {
+      key: "passed",
+      label: "Richtig",
+      value: counts.passed,
+      className: "text-emerald-600 dark:text-emerald-400",
+    },
+    {
+      key: "failed",
+      label: "Nicht bestanden",
+      value: counts.failed,
+      className: "text-destructive",
+    },
+    {
+      key: "skipped",
+      label: "Übersprungen",
+      value: counts.skipped,
+      className: "text-amber-600 dark:text-amber-300",
+    },
+  ];
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-10 sm:px-6 sm:py-14">
@@ -354,13 +450,15 @@ function SessionComplete({
       </p>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-3">
-        {(Object.keys(counts) as unknown as SRSRating[]).map((r) => (
-          <div key={r} className="rounded-lg border bg-card p-4">
+        {summaryCards.map((item) => (
+          <div key={item.key} className="rounded-lg border bg-card p-4">
             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              {ratingLabels[r]}
+              {item.label}
             </p>
-            <p className="mt-1 text-2xl font-semibold tabular-nums">
-              {counts[r]}
+            <p
+              className={`mt-1 text-2xl font-semibold tabular-nums ${item.className}`}
+            >
+              {item.value}
             </p>
           </div>
         ))}
@@ -375,7 +473,9 @@ function SessionComplete({
             >
               <span className="truncate text-sm">{c.title}</span>
               <span className="shrink-0 text-xs text-muted-foreground">
-                {c.score}/{c.max} · {ratingLabels[c.rating]}
+                {c.skipped
+                  ? `übersprungen · ${ratingLabels[c.rating]}`
+                  : `${c.score}/${c.max} · ${ratingLabels[c.rating]}`}
               </span>
             </li>
           ))}

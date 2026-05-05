@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Progress } from "@/components/ui/progress";
+import { AttemptProgressBar } from "@/components/attempt-progress-bar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -196,7 +196,7 @@ function SidebarItem({
       </div>
       <span className="text-xs text-muted-foreground">{task.tutorium}</span>
       {stats && stats.total > 0 ? (
-        <Progress value={stats.successRate} className="h-1" />
+        <AttemptProgressBar stats={stats} className="h-1" />
       ) : null}
     </Link>
   );

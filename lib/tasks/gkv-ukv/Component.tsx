@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -106,11 +107,26 @@ export function GkvUkvComponent({
         </Table>
       }
       learnHelp={
-        <>
-          <Formula expr="HK_{je\,Stk} = \dfrac{k_{var}^{HK}\cdot M + K_{fix}^{HK}}{M}" />
-          <Formula expr="\text{GKV: } G = E + \sum \Delta B \cdot HK_{je\,Stk} - K_{gesamt}" />
-          <Formula expr="\text{UKV: } G = E - \sum HK_{je\,Stk}\cdot A - K_{Vertrieb}" />
-        </>
+        <LearnLegend
+          intro="Gesamtkostenverfahren (GKV) und Umsatzkostenverfahren (UKV) ermitteln denselben Periodenerfolg auf zwei Wegen. GKV stellt alle Kosten den Erträgen inkl. Bestandsveränderungen gegenüber, UKV nur die Herstellkosten der abgesetzten Menge."
+          variables={[
+            { sym: "M", desc: "Produzierte Menge der Periode (Stück)" },
+            { sym: "A", desc: "Abgesetzte Menge der Periode (Stück)" },
+            { sym: "\\Delta B", desc: "Bestandsveränderung in Stück (Mehrung > 0, Minderung < 0)" },
+            { sym: "k_{var}^{HK}", desc: "Variable Herstellkosten je Stück (€/Stück)" },
+            { sym: "K_{fix}^{HK}", desc: "Fixe Herstellkosten der Periode (€)" },
+            { sym: "HK_{je\\,Stk}", desc: "Vollkosten-Herstellkosten pro Stück (€/Stück)" },
+            { sym: "E", desc: "Erlöse / Umsatz (€)" },
+            { sym: "K_{gesamt}", desc: "Gesamte angefallene Kosten der Periode (€)" },
+            { sym: "K_{Vertrieb}", desc: "Vertriebs- und Verwaltungskosten der Periode (€)" },
+            { sym: "G", desc: "Periodenerfolg / Gewinn (€)" },
+          ]}
+          formulas={[
+            { expr: "HK_{je\\,Stk} = \\dfrac{k_{var}^{HK}\\cdot M + K_{fix}^{HK}}{M}", desc: "Vollkosten-Herstellkosten je Stück: variable plus fixe HK auf die Produktionsmenge umgelegt." },
+            { expr: "\\text{GKV: } G = E + \\sum \\Delta B \\cdot HK_{je\\,Stk} - K_{gesamt}", desc: "Gesamtkostenverfahren: Umsatz plus aktivierte Bestandsmehrung (bzw. minus Bestandsminderung) minus alle Periodenkosten." },
+            { expr: "\\text{UKV: } G = E - \\sum HK_{je\\,Stk}\\cdot A - K_{Vertrieb}", desc: "Umsatzkostenverfahren: Umsatz minus Herstellkosten der abgesetzten Menge minus Verwaltungs-/Vertriebskosten." },
+          ]}
+        />
       }
       form={
         <div className="space-y-4">

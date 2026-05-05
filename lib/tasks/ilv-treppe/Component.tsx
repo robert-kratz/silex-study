@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -120,11 +121,20 @@ export function IlvTreppeComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="k_A = \dfrac{PK_A}{x_{AB} + x_{AC} + x_{AE_1} + x_{AE_2}}" />
-          <Formula expr="k_B = \dfrac{PK_B + x_{AB}\cdot k_A}{x_{BC} + x_{BE_1} + x_{BE_2}}" />
-          <Formula expr="k_C = \dfrac{PK_C + x_{AC}\cdot k_A + x_{BC}\cdot k_B}{x_{CE_1} + x_{CE_2}}" />
-        </>
+        <LearnLegend
+          intro="Treppen-/Stufenleiterverfahren für drei Vorkostenstellen: Die Stellen werden in eine Reihenfolge gebracht; jede Stelle gibt nur an nachgelagerte Stellen ab. Rückläufige Leistungen werden ignoriert."
+          variables={[
+            { sym: "PK_A, PK_B, PK_C", desc: "Primäre Kosten der Vorkostenstellen A, B, C (€)" },
+            { sym: "x_{AB}, x_{AC}, x_{BC}", desc: "Innerbetriebliche Leistungen entlang der Treppe" },
+            { sym: "x_{AE_i}, x_{BE_i}, x_{CE_i}", desc: "Leistungen der Vorstellen an die Endkostenstellen E_i" },
+            { sym: "k_A, k_B, k_C", desc: "Verrechnungspreise der Stellen A, B, C (€/Einheit)" },
+          ]}
+          formulas={[
+            { expr: "k_A = \\dfrac{PK_A}{x_{AB} + x_{AC} + x_{AE_1} + x_{AE_2}}", desc: "Stelle A wird zuerst abgerechnet: Primärkosten auf alle abgegebenen Leistungen verteilen." },
+            { expr: "k_B = \\dfrac{PK_B + x_{AB}\\cdot k_A}{x_{BC} + x_{BE_1} + x_{BE_2}}", desc: "Stelle B übernimmt Belastungen von A; die Rückleistung B → A bleibt unberücksichtigt." },
+            { expr: "k_C = \\dfrac{PK_C + x_{AC}\\cdot k_A + x_{BC}\\cdot k_B}{x_{CE_1} + x_{CE_2}}", desc: "Stelle C nimmt Leistungen aus A und B auf, gibt aber nur an Endstellen ab." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-3">

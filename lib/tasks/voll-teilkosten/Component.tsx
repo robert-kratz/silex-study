@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -120,11 +121,25 @@ export function VollTeilkostenComponent({
         </Table>
       }
       learnHelp={
-        <>
-          <Formula expr="G_{Voll} = E - \sum HK_{je\,Stk}\cdot A - K_{Vt}" />
-          <Formula expr="G_{Teil} = E - \sum k_{var}^{HK}\cdot A - \sum k_{var}^{Vt}\cdot A - K_{fix}" />
-          <Formula expr="\Delta G = \sum \Delta B \cdot \dfrac{K_{fix}^{HK}}{M}" />
-        </>
+        <LearnLegend
+          intro="Voll- vs. Teilkostenrechnung: Beide Verfahren ermitteln den Periodenerfolg, behandeln aber Fixkosten unterschiedlich. Bei Bestandsveränderungen werden im Vollkostenfall Fixkosten aktiviert/aufgelöst und der ausgewiesene Gewinn schwankt entsprechend."
+          variables={[
+            { sym: "E", desc: "Erlöse / Umsatz (€)" },
+            { sym: "A", desc: "Abgesetzte Menge je Produkt (Stück)" },
+            { sym: "M", desc: "Produzierte Menge je Produkt (Stück)" },
+            { sym: "\\Delta B", desc: "Bestandsveränderung in Stück (Mehrung > 0, Minderung < 0)" },
+            { sym: "HK_{je\\,Stk}", desc: "Vollkosten-Herstellkosten je Stück (€)" },
+            { sym: "k_{var}^{HK}, k_{var}^{Vt}", desc: "Variable Herstell-/Vertriebsstückkosten (€/Stück)" },
+            { sym: "K_{fix}^{HK}", desc: "Fixe Herstellkosten der Periode (€)" },
+            { sym: "K_{Vt}, K_{fix}", desc: "Vertriebs-/gesamte Fixkosten (€)" },
+            { sym: "G", desc: "Periodenerfolg (€)" },
+          ]}
+          formulas={[
+            { expr: "G_{Voll} = E - \\sum HK_{je\\,Stk}\\cdot A - K_{Vt}", desc: "Gewinn nach Vollkostenrechnung (UKV-Logik): nur HK der abgesetzten Menge belasten." },
+            { expr: "G_{Teil} = E - \\sum k_{var}^{HK}\\cdot A - \\sum k_{var}^{Vt}\\cdot A - K_{fix}", desc: "Teilkostenrechnung: nur variable Kosten dem Produkt zurechnen, gesamte Fixkosten als Periodenkosten abziehen." },
+            { expr: "\\Delta G = \\sum \\Delta B \\cdot \\dfrac{K_{fix}^{HK}}{M}", desc: "Differenz beider Gewinne entsteht ausschließlich durch im Bestand aktivierte fixe Herstellkosten." },
+          ]}
+        />
       }
       form={
         <div className="space-y-4">

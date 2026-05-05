@@ -4,6 +4,7 @@ import * as React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
+import { useLearnMode } from "@/lib/learn-mode-context";
 import type { TaskComponentProps, CheckResult } from "@/lib/tasks/types";
 import type { QuizParams, QuizSolution } from "./generate";
 import { checkTheorieQuiz, type QuizAnswer } from "./check";
@@ -18,28 +19,40 @@ export function TheorieQuizComponent({
   shareUrl,
   courseId,
 }: TaskComponentProps<QuizParams, QuizSolution>) {
+  const learnMode = useLearnMode();
+
+  // In learn mode: show exactly one question (determined by the seed-based
+  // random selection in generate.ts — itemIds[0] is already random).
+  const effectiveParams: QuizParams = learnMode
+    ? { itemIds: params.itemIds.slice(0, 1), optionOrder: params.optionOrder.slice(0, 1) }
+    : params;
+  const effectiveSolution = learnMode
+    ? { correctIndex: solution.correctIndex.slice(0, 1) }
+    : solution;
+
   const initial = React.useMemo<Record<string, string>>(() => {
     const o: Record<string, string> = {};
-    params.itemIds.forEach((_, i) => (o[`q${i}`] = ""));
+    effectiveParams.itemIds.forEach((_, i) => (o[`q${i}`] = ""));
     return o;
-  }, [params.itemIds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seed, learnMode]);
 
   const [raw, setRaw] = React.useState<Record<string, string>>(initial);
   const [inputErrors, setInputErrors] = React.useState<Partial<Record<string, string>>>({});
   const [checkResult, setCheckResult] = React.useState<CheckResult | null>(null);
 
   const handleSubmit = () => {
-    const errs = validateTheorieQuizInput(raw, params);
+    const errs = validateTheorieQuizInput(raw, effectiveParams);
     setInputErrors(errs);
     if (Object.keys(errs).length > 0) {
       setCheckResult(null);
       return;
     }
-    const answer: QuizAnswer = params.itemIds.map((_, i) => {
+    const answer: QuizAnswer = effectiveParams.itemIds.map((_, i) => {
       const v = raw[`q${i}`];
       return v === "" ? null : Number(v);
     });
-    setCheckResult(checkTheorieQuiz(solution, answer));
+    setCheckResult(checkTheorieQuiz(effectiveSolution, answer));
   };
 
   const handleReset = () => {
@@ -68,19 +81,19 @@ export function TheorieQuizComponent({
       shareUrl={shareUrl}
       title="Antworten markieren"
       description="Multiple-Choice-Fragen zur Theorie des internen Rechnungswesens."
-      buildPromptText={() => buildTheorieQuizPrompt(params)}
+      buildPromptText={() => buildTheorieQuizPrompt(effectiveParams)}
       problem={
         <p>
-          Beantworte die folgenden {params.itemIds.length} Multiple-Choice-Fragen.
+          Beantworte {learnMode ? "die folgende" : `die folgenden ${effectiveParams.itemIds.length}`} Multiple-Choice-Frage{learnMode ? "" : "n"}.
           Pro Frage ist genau eine Antwort korrekt; nach dem Prüfen werden Erklärungen
           eingeblendet.
         </p>
       }
       form={
         <div className="space-y-6">
-          {params.itemIds.map((id, qi) => {
+          {effectiveParams.itemIds.map((id, qi) => {
             const item = getItem(id);
-            const order = params.optionOrder[qi];
+            const order = effectiveParams.optionOrder[qi];
             const fieldErr = inputErrors[`q${qi}`];
             const status = checkResult?.fields[`q${qi}`];
             const selected = raw[`q${qi}`];
@@ -143,7 +156,7 @@ export function TheorieQuizComponent({
       onSubmit={handleSubmit}
       onReset={handleReset}
       checkResult={checkResult}
-      solutionView={<TheorieQuizSolutionView params={params} solution={solution} />}
+      solutionView={<TheorieQuizSolutionView params={effectiveParams} solution={effectiveSolution} />}
     />
   );
 }

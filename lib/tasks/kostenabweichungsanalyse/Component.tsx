@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, pct, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -109,15 +110,21 @@ export function KostenabweichungComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="\text{Verrechnete GK} = \text{Ist-EK}\cdot \text{Plan-Zuschlagssatz}" />
-          <Formula expr="\Delta = \text{Verrechnete GK} - \text{Ist-GK}" />
-          <p className="text-xs text-muted-foreground">
-            Δ &gt; 0: Überdeckung (zu viel verrechnet) · Δ &lt; 0: Unterdeckung (zu wenig
-            verrechnet). Beim Writeoff Approach wird Δ vollständig über die Umsatzkosten
-            verrechnet.
-          </p>
-        </>
+        <LearnLegend
+          intro="Über-/Unterdeckung im BAB: Vergleiche die mit Plan-Zuschlagssatz auf Aufträge verrechneten Gemeinkosten mit den tatsächlich angefallenen Ist-Gemeinkosten der Periode."
+          variables={[
+            { sym: "\\text{Ist-EK}", desc: "Tatsächlich angefallene Einzelkosten der Periode (€) als Zuschlagsbasis" },
+            { sym: "\\text{Plan-Zuschlagssatz}", desc: "Im Voraus geplanter %-Satz, mit dem Gemeinkosten kalkulatorisch verrechnet werden" },
+            { sym: "\\text{Verrechnete GK}", desc: "Den Aufträgen über den Plan-Zuschlag belastete Gemeinkosten (€)" },
+            { sym: "\\text{Ist-GK}", desc: "Tatsächlich gebuchte Gemeinkosten der Periode (€)" },
+            { sym: "\\Delta", desc: "Abweichung zwischen verrechneten und tatsächlichen GK" },
+          ]}
+          formulas={[
+            { expr: "\\text{Verrechnete GK} = \\text{Ist-EK}\\cdot \\text{Plan-Zuschlagssatz}", desc: "Was die Kostenträger über den Plansatz an Gemeinkosten getragen haben." },
+            { expr: "\\Delta = \\text{Verrechnete GK} - \\text{Ist-GK}", desc: "Δ > 0 ⇒ Überdeckung (zu viel verrechnet), Δ < 0 ⇒ Unterdeckung (zu wenig verrechnet)." },
+          ]}
+          notes={<p>Beim <strong>Writeoff Approach</strong> wird Δ vollständig über die Umsatzkosten der Periode korrigiert.</p>}
+        />
       }
       form={
         <div className="space-y-4">

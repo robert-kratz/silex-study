@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -84,11 +85,22 @@ export function GewinnmaximierungComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="\pi(x) = p\cdot a\sqrt{x} - w\cdot x" />
-          <Formula expr="\pi'(x) = \frac{p\cdot a}{2\sqrt{x}} - w \stackrel{!}{=} 0" />
-          <Formula expr="x^* = \left(\frac{p\cdot a}{2w}\right)^2" />
-        </>
+        <LearnLegend
+          intro="Gewinnmaximierung mit Wurzelproduktionsfunktion: Aus dem Optimalitätskriterium π′(x)=0 wird der gewinnmaximale Inputeinsatz x* analytisch bestimmt."
+          variables={[
+            { sym: "x", desc: "Eingesetzte Inputmenge (z. B. Faktorstunden)" },
+            { sym: "a", desc: "Produktivitätskonstante der Produktionsfunktion y = a\u221ax" },
+            { sym: "p", desc: "Outputpreis (€ pro Outputeinheit)" },
+            { sym: "w", desc: "Inputpreis (€ pro Inputeinheit)" },
+            { sym: "\\pi(x)", desc: "Gewinnfunktion (€)" },
+            { sym: "x^*", desc: "Gewinnmaximaler Inputeinsatz" },
+          ]}
+          formulas={[
+            { expr: "\\pi(x) = p\\cdot a\\sqrt{x} - w\\cdot x", desc: "Gewinn = Erlös minus Faktorkosten bei Wurzelproduktionsfunktion." },
+            { expr: "\\pi'(x) = \\frac{p\\cdot a}{2\\sqrt{x}} - w \\stackrel{!}{=} 0", desc: "Bedingung erster Ordnung: Grenzerlös = Grenzkosten." },
+            { expr: "x^* = \\left(\\frac{p\\cdot a}{2w}\\right)^2", desc: "Aufgelöst nach x: gewinnmaximaler Inputeinsatz." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">

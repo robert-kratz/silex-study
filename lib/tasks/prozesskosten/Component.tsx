@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -121,10 +122,21 @@ export function ProzesskostenComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="\text{PKS}_p = \dfrac{K_p}{M_p}" />
-          <Formula expr="K_{Auftrag} = \sum_p \text{PKS}_p \cdot m_{p,Auftrag}" />
-        </>
+        <LearnLegend
+          intro="Prozesskostenrechnung: Für jeden Teilprozess wird ein Prozesskostensatz pro Bezugsgröße (Cost Driver) gebildet und auf Aufträge / Produkte umgelegt."
+          variables={[
+            { sym: "p", desc: "Index des Teilprozesses" },
+            { sym: "K_p", desc: "Periodenkosten des Prozesses p (€)" },
+            { sym: "M_p", desc: "Periodische Prozessmenge (Cost-Driver-Einheiten)" },
+            { sym: "\\text{PKS}_p", desc: "Prozesskostensatz: Kosten pro Bezugsgröße (€)" },
+            { sym: "m_{p,Auftrag}", desc: "Vom Auftrag verursachte Prozessmenge" },
+            { sym: "K_{Auftrag}", desc: "Dem Auftrag zugewiesene Prozesskosten (€)" },
+          ]}
+          formulas={[
+            { expr: "\\text{PKS}_p = \\dfrac{K_p}{M_p}", desc: "Prozesskostensatz = Prozesskosten geteilt durch Prozessmenge." },
+            { expr: "K_{Auftrag} = \\sum_p \\text{PKS}_p \\cdot m_{p,Auftrag}", desc: "Auftragskosten = Summe über alle Prozesse von PKS × in Anspruch genommene Prozessmenge." },
+          ]}
+        />
       }
       form={
         <div className="space-y-4">

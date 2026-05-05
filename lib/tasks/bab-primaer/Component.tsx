@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { cn } from "@/lib/utils";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -98,12 +99,22 @@ export function BabPrimaerComponent({
         </Table>
       }
       learnHelp={
-        <div className="space-y-2 text-sm">
-          <p>Umlagesatz pro Kostenart:</p>
-          <Formula expr="u_j = \dfrac{\text{Betrag}_j}{\sum_i s_{ij}}" />
-          <p>Anteil einer Stelle:</p>
-          <Formula expr="\text{Anteil}_{ij} = u_j \cdot s_{ij}" />
-        </div>
+        <LearnLegend
+          intro="Primärkostenverrechnung im Betriebsabrechnungsbogen (BAB): Jede Kostenart wird mit einem Schlüssel (z. B. Quadratmeter, Personalstärke) auf die Kostenstellen verteilt."
+          variables={[
+            { sym: "j", desc: "Index der Kostenart" },
+            { sym: "i", desc: "Index der Kostenstelle" },
+            { sym: "\\text{Betrag}_j", desc: "Zu verteilender Gesamtbetrag der Kostenart j (€)" },
+            { sym: "s_{ij}", desc: "Schlüsselgröße der Stelle i für Kostenart j" },
+            { sym: "u_j", desc: "Umlagesatz pro Schlüsseleinheit der Kostenart j" },
+            { sym: "\\text{Anteil}_{ij}", desc: "Auf Stelle i entfallender Betrag der Kostenart j (€)" },
+          ]}
+          formulas={[
+            { expr: "u_j = \\dfrac{\\text{Betrag}_j}{\\sum_i s_{ij}}", desc: "Umlagesatz: Gesamtbetrag durch Summe der Schlüsselgrößen." },
+            { expr: "\\text{Anteil}_{ij} = u_j \\cdot s_{ij}", desc: "Anteil einer Stelle: Umlagesatz mal Schlüsselgröße der Stelle." },
+          ]}
+          notes={<p>Kontrolle: Σ Anteile je Kostenart = Ausgangsbetrag.</p>}
+        />
       }
       form={
         <div className="overflow-x-auto">

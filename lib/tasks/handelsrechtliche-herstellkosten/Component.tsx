@@ -12,6 +12,7 @@ import {
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { eur, parseLocaleNumber } from "@/lib/tasks/_shared/format";
 import type { TaskComponentProps, CheckResult } from "@/lib/tasks/types";
 import type { HgbHerstellkostenParams, HgbKategorie } from "./generate";
@@ -112,24 +113,25 @@ export function HgbHerstellkostenComponent({
         </Table>
       }
       learnHelp={
-        <ul className="list-disc space-y-1 pl-5 text-sm">
-          <li>
-            <strong>Pflicht:</strong> MEK, FEK, Sondereinzelkosten Fertigung, MGK, FGK,
-            Werteverzehr Anlagevermögen Fertigung.
-          </li>
-          <li>
-            <strong>Wahlrecht:</strong> Verwaltungskosten, herstellungsbezogene
-            Fremdkapitalkosten, freiwillige soziale Leistungen, Altersvorsorge.
-          </li>
-          <li>
-            <strong>Verboten:</strong> Forschungskosten, Vertriebskosten, kalkulatorische
-            Kosten (Zinsen, Unternehmerlohn).
-          </li>
-          <li>
-            <Formula expr="\text{Untergrenze} = \sum \text{Pflicht}" />
-            <Formula expr="\text{Obergrenze} = \text{Untergrenze} + \sum \text{Wahlrecht}" />
-          </li>
-        </ul>
+        <LearnLegend
+          intro="Handelsrechtliche Herstellkosten (§ 255 Abs. 2 HGB): Pflicht- und Wahlbestandteile bestimmen die zulässige Bewertungsspanne für Vorräte und unfertige Erzeugnisse."
+          variables={[
+            { sym: "\\text{Pflicht}", desc: "Bestandteile, die zwingend in die Herstellkosten einfließen" },
+            { sym: "\\text{Wahlrecht}", desc: "Bestandteile, die einbezogen werden dürfen, aber nicht müssen" },
+            { sym: "\\text{Verboten}", desc: "Bestandteile, die nicht aktiviert werden dürfen" },
+          ]}
+          formulas={[
+            { expr: "\\text{Untergrenze} = \\sum \\text{Pflicht}", desc: "Mindestansatz: nur die zwingenden Bestandteile einbeziehen." },
+            { expr: "\\text{Obergrenze} = \\text{Untergrenze} + \\sum \\text{Wahlrecht}", desc: "Maximalansatz: zusätzlich alle Wahlrechtbestandteile aktivieren." },
+          ]}
+          notes={
+            <ul className="list-disc space-y-1 pl-5">
+              <li><strong>Pflicht:</strong> MEK, FEK, Sondereinzelkosten Fertigung, MGK, FGK, Werteverzehr Anlagevermögen Fertigung.</li>
+              <li><strong>Wahlrecht:</strong> Verwaltungskosten, herstellungsbezogene Fremdkapitalkosten, freiwillige soziale Leistungen, Altersvorsorge.</li>
+              <li><strong>Verboten:</strong> Forschungskosten, Vertriebskosten, kalkulatorische Kosten (Zinsen, Unternehmerlohn).</li>
+            </ul>
+          }
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">

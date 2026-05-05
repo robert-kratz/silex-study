@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { eur, parseLocaleNumber } from "@/lib/tasks/_shared/format";
 import type { TaskComponentProps, CheckResult } from "@/lib/tasks/types";
 import {
@@ -97,11 +98,23 @@ export function WertabgrenzungDetailComponent({
         </ol>
       }
       learnHelp={
-        <ul className="list-disc space-y-1 pl-5 text-sm">
-          <li>Zusatzkosten haben keinen Aufwand (z. B. kalk. Unternehmerlohn).</li>
-          <li>Anderskosten weichen wertmäßig vom Aufwand ab (z. B. kalk. AfA).</li>
-          <li>Kreditzu-/abflüsse berühren nur Ein-/Auszahlung.</li>
-        </ul>
+        <LearnLegend
+          intro="Detaillierte Abgrenzung von Aufwand, Kosten und Zahlungsströmen. Für jeden Geschäftsvorfall ist zu prüfen, ob er die Buchhaltung (Aufwand/Ertrag) oder die Kostenrechnung (Kosten/Leistungen) berührt – oder beides."
+          variables={[
+            { sym: "\\text{Zusatzkosten}", desc: "Kosten ohne zugehörigen Aufwand (z. B. kalk. Unternehmerlohn)" },
+            { sym: "\\text{Anderskosten}", desc: "Kosten weichen wertmäßig vom Aufwand ab (z. B. kalk. AfA ≠ bilanzielle AfA)" },
+            { sym: "\\text{Neutraler Aufwand}", desc: "Aufwand, der nicht den Betriebszweck betrifft (z. B. periodenfremd, außerordentlich)" },
+            { sym: "\\text{Auszahlung}", desc: "Reine Geldabflüsse ohne Auswirkung auf Aufwand oder Kosten" },
+          ]}
+          formulas={[]}
+          notes={
+            <ul className="list-disc space-y-1 pl-5">
+              <li>Zusatzkosten haben keinen Aufwand (z. B. kalk. Unternehmerlohn).</li>
+              <li>Anderskosten weichen wertmäßig vom Aufwand ab (z. B. kalk. AfA).</li>
+              <li>Kreditzu-/abflüsse berühren nur Ein-/Auszahlungen, nicht aber Aufwand/Kosten.</li>
+            </ul>
+          }
+        />
       }
       form={
         <div className="overflow-x-auto">

@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -101,11 +102,23 @@ export function KuppelRestwertComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="\text{Kostendeckung} = \sum_{NB} (\text{Erlös}_{NB} - k_{direkt,NB})" />
-          <Formula expr="HK_{HP} = K - \text{Kostendeckung} + k_{direkt,HP}" />
-          <Formula expr="k_{HP} = \dfrac{HK_{HP}}{Menge_{HP}}" />
-        </>
+        <LearnLegend
+          intro="Kuppelkalkulation – Restwertmethode: Erlöse der Nebenprodukte (abzüglich ihrer Direktkosten) verringern als „negative Kosten“ die Herstellkosten des Hauptprodukts."
+          variables={[
+            { sym: "K", desc: "Gesamte Kuppelkosten der Periode (€)" },
+            { sym: "\\text{Erlös}_{NB}", desc: "Erlös des jeweiligen Nebenprodukts (€)" },
+            { sym: "k_{direkt,NB}", desc: "Direkt zurechenbare Weiterverarbeitungs-/Vertriebskosten des Nebenprodukts (€)" },
+            { sym: "k_{direkt,HP}", desc: "Direkt zurechenbare Kosten des Hauptprodukts (€)" },
+            { sym: "HK_{HP}", desc: "Herstellkosten des Hauptprodukts insgesamt (€)" },
+            { sym: "Menge_{HP}", desc: "Produzierte Menge des Hauptprodukts" },
+            { sym: "k_{HP}", desc: "Stückkosten des Hauptprodukts (€/Stück)" },
+          ]}
+          formulas={[
+            { expr: "\\text{Kostendeckung} = \\sum_{NB} (\\text{Erlös}_{NB} - k_{direkt,NB})", desc: "Beitrag aller Nebenprodukte zur Deckung der Kuppelkosten." },
+            { expr: "HK_{HP} = K - \\text{Kostendeckung} + k_{direkt,HP}", desc: "Verbleibende Herstellkosten, die das Hauptprodukt zu tragen hat." },
+            { expr: "k_{HP} = \\dfrac{HK_{HP}}{Menge_{HP}}", desc: "Stückkosten = Herstellkosten dividiert durch die Hauptproduktmenge." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-3">

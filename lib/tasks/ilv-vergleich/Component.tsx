@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -97,16 +98,24 @@ export function IlvVergleichComponent({
         </ul>
       }
       learnHelp={
-        <>
-          <p className="text-sm font-medium">Block (ohne V↔V):</p>
-          <Formula expr="k_1 = \dfrac{PK_1}{x_{1E_1}+x_{1E_2}},\quad k_2 = \dfrac{PK_2}{x_{2E_1}+x_{2E_2}}" />
-          <p className="text-sm font-medium">Treppe (V1 zuerst):</p>
-          <Formula expr="k_1 = \dfrac{PK_1}{x_{12}+x_{1E_1}+x_{1E_2}}" />
-          <Formula expr="k_2 = \dfrac{PK_2 + x_{12}\cdot k_1}{x_{2E_1}+x_{2E_2}}" />
-          <p className="text-sm font-medium">Gleichungsverfahren:</p>
-          <Formula expr="x_1\,k_1 - x_{21}\,k_2 = PK_1" />
-          <Formula expr="-x_{12}\,k_1 + x_2\,k_2 = PK_2" />
-        </>
+        <LearnLegend
+          intro="Vergleich der drei klassischen ILV-Verfahren für zwei Vorkostenstellen mit gegenseitigem Leistungsaustausch (V ↔ V)."
+          variables={[
+            { sym: "PK_1, PK_2", desc: "Primäre Kosten der Vorkostenstellen 1 und 2 (€)" },
+            { sym: "x_{12}, x_{21}", desc: "Wechselseitig abgegebene Leistungsmengen" },
+            { sym: "x_{1E_i}, x_{2E_i}", desc: "Leistungen an die Endkostenstellen E_i" },
+            { sym: "x_1, x_2", desc: "Gesamtleistungen der Stellen 1 bzw. 2" },
+            { sym: "k_1, k_2", desc: "Verrechnungspreise der Stellen 1 und 2 (€/Einheit)" },
+          ]}
+          formulas={[
+            { expr: "k_1 = \\dfrac{PK_1}{x_{1E_1}+x_{1E_2}},\\quad k_2 = \\dfrac{PK_2}{x_{2E_1}+x_{2E_2}}", desc: "Block: V ↔ V wird ignoriert; Primärkosten nur auf Endstellenleistungen umlegen." },
+            { expr: "k_1 = \\dfrac{PK_1}{x_{12}+x_{1E_1}+x_{1E_2}}", desc: "Treppe (Stelle 1 zuerst): k₁ auf alle abgegebenen Leistungen, danach k₂ unter Einbezug der übernommenen Belastung." },
+            { expr: "k_2 = \\dfrac{PK_2 + x_{12}\\cdot k_1}{x_{2E_1}+x_{2E_2}}", desc: "Treppe Stelle 2: belastet mit dem Wert der von 1 empfangenen Leistung; Rückleistung 2 → 1 bleibt unberücksichtigt." },
+            { expr: "x_1\\,k_1 - x_{21}\\,k_2 = PK_1", desc: "Gleichungsverfahren, Gleichung 1: Wert eigener Leistung minus von 2 empfangene Leistung = Primärkosten." },
+            { expr: "-x_{12}\\,k_1 + x_2\\,k_2 = PK_2", desc: "Gleichungsverfahren, Gleichung 2: analog für Stelle 2; das 2×2-LGS löst die echten Verrechnungspreise." },
+          ]}
+          notes={<p>Nur das Gleichungsverfahren berücksichtigt wechselseitige Leistungen exakt; Block und Treppe sind Näherungen.</p>}
+        />
       }
       form={
         <div className="space-y-6">

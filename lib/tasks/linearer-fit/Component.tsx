@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -99,10 +100,20 @@ export function LinearerFitComponent({
         </Table>
       }
       learnHelp={
-        <>
-          <Formula expr="K(x) = K_{fix} + k_{var}\cdot x" />
-          <Formula expr="K_{fix} = (k_{\text{durchschnitt}} - k_{var})\cdot x" />
-        </>
+        <LearnLegend
+          intro="Aus Durchschnittskosten und variablen Grenzkosten lässt sich der Fixkostenblock einer linearen Kostenfunktion herausrechnen."
+          variables={[
+            { sym: "K(x)", desc: "Gesamtkosten in Abhängigkeit von der Menge x (€)" },
+            { sym: "K_{fix}", desc: "Fixkosten der Periode (€)" },
+            { sym: "k_{var}", desc: "Variable Stückkosten (€/Stück) = Steigung der Kostengerade" },
+            { sym: "k_{\\text{durchschnitt}}", desc: "Durchschnittliche Stückkosten = K(x)/x (€/Stück)" },
+            { sym: "x", desc: "Produzierte Menge (Stück)" },
+          ]}
+          formulas={[
+            { expr: "K(x) = K_{fix} + k_{var}\\cdot x", desc: "Lineare Kostenfunktion: Fixkosten plus mengenproportionale variable Kosten." },
+            { expr: "K_{fix} = (k_{\\text{durchschnitt}} - k_{var})\\cdot x", desc: "Fixkostenermittlung aus Durchschnitts- und Grenzkosten für eine bekannte Menge." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">

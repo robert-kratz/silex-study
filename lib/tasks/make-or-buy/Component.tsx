@@ -3,6 +3,7 @@
 import * as React from "react";
 import { Label } from "@/components/ui/label";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { cn } from "@/lib/utils";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
@@ -82,13 +83,20 @@ export function MakeOrBuyComponent({
         </div>
       }
       learnHelp={
-        <div className="space-y-2 text-sm">
-          <ul className="list-disc space-y-1 pl-5">
-            <li>Sunk Costs (nicht abbaubare Fixkosten) fallen in beiden Alternativen an und sind <strong>nicht entscheidungsrelevant</strong>.</li>
-          </ul>
-          <Formula expr="K_{\text{eigen,relevant}} = k_{\text{var}} \cdot x + K_{\text{fix,abbaubar}}" />
-          <Formula expr="K_{\text{fremd,relevant}} = p_{\text{ext}} \cdot x" />
-        </div>
+        <LearnLegend
+          intro="Eigenfertigung vs. Fremdbezug: Vergleiche nur die entscheidungsrelevanten Kosten. Sunk Costs (nicht abbaubare Fixkosten) fallen in beiden Alternativen an und werden ausgeklammert."
+          variables={[
+            { sym: "x", desc: "Bedarfsmenge (Stück)" },
+            { sym: "k_{\\text{var}}", desc: "Variable Stückkosten der Eigenfertigung (€/Stück)" },
+            { sym: "K_{\\text{fix,abbaubar}}", desc: "Fixkosten der Eigenfertigung, die bei Fremdbezug entfallen (€)" },
+            { sym: "p_{\\text{ext}}", desc: "Stückpreis bei Fremdbezug (€/Stück)" },
+          ]}
+          formulas={[
+            { expr: "K_{\\text{eigen,relevant}} = k_{\\text{var}} \\cdot x + K_{\\text{fix,abbaubar}}", desc: "Relevante Kosten der Eigenfertigung: variable Kosten plus die nur bei Eigenfertigung anfallenden Fixkosten." },
+            { expr: "K_{\\text{fremd,relevant}} = p_{\\text{ext}} \\cdot x", desc: "Relevante Kosten des Fremdbezugs: Bedarfsmenge mal Einkaufspreis." },
+          ]}
+          notes={<p>Entscheidungsregel: wähle die Alternative mit den geringeren relevanten Kosten.</p>}
+        />
       }
       form={
         <div className="space-y-4">

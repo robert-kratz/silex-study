@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -116,13 +117,25 @@ export function DivisionskalkulationComponent({
         </Table>
       }
       learnHelp={
-        <>
-          <Formula expr="k_1 = \dfrac{PK_1}{M_1}" />
-          <Formula expr="M_2^{Eingang} = M_1 - \Delta L_1" />
-          <Formula expr="k_2 = \dfrac{PK_2 + k_1 \cdot M_2^{Eingang}}{M_2^{Eingang}}" />
-          <Formula expr="M^{Absatz} = M_2^{Eingang} - \Delta L_2" />
-          <Formula expr="k_{Vertrieb} = k_2 + \dfrac{PK_v}{M^{Absatz}}" />
-        </>
+        <LearnLegend
+          intro="Mehrstufige Divisionskalkulation: Pro Produktionsstufe werden die Periodenkosten auf die jeweilige Stufenmenge umgelegt. Lagerbestandsveränderungen reduzieren die Eingangsmenge der Folgestufe; Vertriebskosten werden nur auf die Absatzmenge verrechnet."
+          variables={[
+            { sym: "PK_1, PK_2", desc: "Periodenkosten der Fertigungsstufen 1 und 2 (€)" },
+            { sym: "PK_v", desc: "Periodische Vertriebskosten (€)" },
+            { sym: "M_1", desc: "In Stufe 1 produzierte Menge" },
+            { sym: "\\Delta L_1, \\Delta L_2", desc: "Lagerbestandsveränderungen nach Stufe 1 bzw. 2" },
+            { sym: "M_2^{Eingang}", desc: "In Stufe 2 eingehende Menge" },
+            { sym: "M^{Absatz}", desc: "Tatsächlich abgesetzte Menge" },
+            { sym: "k_1, k_2, k_{Vertrieb}", desc: "Kumulierte Stückkosten nach Stufe 1, Stufe 2 bzw. inkl. Vertrieb (€/Stück)" },
+          ]}
+          formulas={[
+            { expr: "k_1 = \\dfrac{PK_1}{M_1}", desc: "Stückkosten der ersten Stufe – Stufenkosten geteilt durch Stufenmenge." },
+            { expr: "M_2^{Eingang} = M_1 - \\Delta L_1", desc: "Eingangsmenge Stufe 2: Produktionsmenge Stufe 1 abzüglich Lagerzugang." },
+            { expr: "k_2 = \\dfrac{PK_2 + k_1 \\cdot M_2^{Eingang}}{M_2^{Eingang}}", desc: "Kumulierte Stückkosten nach Stufe 2: Stufenkosten plus übernommene Stückkosten." },
+            { expr: "M^{Absatz} = M_2^{Eingang} - \\Delta L_2", desc: "Absatzmenge: Stufe-2-Eingang minus Lagermehrung Stufe 2." },
+            { expr: "k_{Vertrieb} = k_2 + \\dfrac{PK_v}{M^{Absatz}}", desc: "Vertriebsstückkosten: Vertriebskosten nur auf abgesetzte Menge umlegen." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/table";
 import { CopyButton } from "@/components/copy-button";
 import { CollapsibleCard } from "@/components/collapsible-card";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { Formula } from "@/components/Formula";
 import { useTaskAttempts } from "@/lib/attempts";
 import { cn } from "@/lib/utils";
@@ -176,11 +177,26 @@ export function BreakEvenComponent({
       </Card>
 
       {/* Lernhilfe (zugeklappt) */}
-      <CollapsibleCard title="Lernhilfe" description="Relevante Formeln (zum Aufklappen)">
-        <Formula expr="d = p - k_v" />
-        <Formula expr="x_b = \frac{K_f}{d}" />
-        <Formula expr="U_b = x_b \cdot p" />
-        <Formula expr="x_{ZG} = \frac{K_f + ZG}{d}" />
+      <CollapsibleCard title="Lernhilfe" description="Variablen, Formeln & Bedeutung (zum Aufklappen)">
+        <LearnLegend
+          intro="Break-Even-Analyse für ein Einprodukt-Unternehmen: Ab welcher Menge deckt der Umsatz die Gesamtkosten? Wie viele Stücke sind nötig, um zusätzlich einen Zielgewinn zu erreichen?"
+          variables={[
+            { sym: "p", desc: "Verkaufspreis pro Stück (€)" },
+            { sym: "k_v", desc: "Variable Stückkosten (€/Stück)" },
+            { sym: "d", desc: "Stückdeckungsbeitrag = p − k_v (€/Stück)" },
+            { sym: "K_f", desc: "Periodische Fixkosten (€)" },
+            { sym: "x_b", desc: "Break-Even-Menge – Gewinnschwelle (Stück)" },
+            { sym: "U_b", desc: "Break-Even-Umsatz (€)" },
+            { sym: "ZG", desc: "Zielgewinn der Periode (€)" },
+            { sym: "x_{ZG}", desc: "Menge zur Erreichung des Zielgewinns (Stück)" },
+          ]}
+          formulas={[
+            { expr: "d = p - k_v", desc: "Stückdeckungsbeitrag: Beitrag, den jedes verkaufte Stück zur Deckung der Fixkosten leistet." },
+            { expr: "x_b = \\frac{K_f}{d}", desc: "Break-Even-Menge: ab dieser Menge sind alle Fixkosten gedeckt." },
+            { expr: "U_b = x_b \\cdot p", desc: "Break-Even-Umsatz: Umsatz an der Gewinnschwelle." },
+            { expr: "x_{ZG} = \\frac{K_f + ZG}{d}", desc: "Zielmenge: Fixkosten plus Zielgewinn werden gemeinsam durch den Stückdeckungsbeitrag gedeckt." },
+          ]}
+        />
       </CollapsibleCard>
 
       {/* Eingabeformular */}

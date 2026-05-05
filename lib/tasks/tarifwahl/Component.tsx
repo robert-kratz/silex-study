@@ -12,6 +12,7 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { cn } from "@/lib/utils";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import {
@@ -127,10 +128,21 @@ export function TarifwahlComponent({
         </>
       }
       learnHelp={
-        <>
-          <Formula expr="K = K_{fix} + k_{var}\cdot x" />
-          <Formula expr="k = K / x" />
-        </>
+        <LearnLegend
+          intro="Beim Tarifvergleich werden die Gesamtkosten je Tarif für eine vorgegebene Menge berechnet und der jeweils günstigste Tarif ausgewählt."
+          variables={[
+            { sym: "K", desc: "Gesamtkosten des Tarifs für die betrachtete Menge (€)" },
+            { sym: "K_{fix}", desc: "Periodische Fixkosten / Grundgebühr des Tarifs (€)" },
+            { sym: "k_{var}", desc: "Variable Stückkosten je Mengeneinheit (€/Stück)" },
+            { sym: "x", desc: "Abgesetzte/abgerufene Menge (Stück)" },
+            { sym: "k", desc: "Stückkosten = durchschnittliche Kosten pro Einheit (€/Stück)" },
+          ]}
+          formulas={[
+            { expr: "K = K_{fix} + k_{var}\\cdot x", desc: "Lineare Kostenfunktion: addiere zur Grundgebühr die mengenproportionalen Kosten." },
+            { expr: "k = K / x", desc: "Stückkosten = Gesamtkosten geteilt durch Menge; Vergleichsgröße zur Tarifwahl bei gleicher Menge." },
+          ]}
+          notes={<p>Je höher die Menge, desto stärker dominieren die variablen Kosten – Fixkosten verteilen sich auf mehr Stücke.</p>}
+        />
       }
       form={
         <div className="space-y-5">

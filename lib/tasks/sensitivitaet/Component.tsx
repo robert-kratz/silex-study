@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -74,11 +75,27 @@ export function SensitivitaetComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="d = p - k_v,\quad x_b = K_f / d" />
-          <Formula expr="S = \dfrac{x_e - x_b}{x_e}\cdot 100\,\%" />
-          <Formula expr="\Delta G = d\cdot \Delta x - \Delta K_f" />
-        </>
+        <LearnLegend
+          intro="Sensitivitätsanalyse rund um den Break-Even: Wie weit liegt der erwartete Absatz über dem BE (Sicherheitskoeffizient) und wie wirkt sich eine Werbemaßnahme auf den Gewinn aus?"
+          variables={[
+            { sym: "p", desc: "Verkaufspreis pro Stück (€)" },
+            { sym: "k_v", desc: "Variable Stückkosten (€)" },
+            { sym: "d", desc: "Stückdeckungsbeitrag = p − k_v" },
+            { sym: "K_f", desc: "Periodische Fixkosten (€)" },
+            { sym: "x_b", desc: "Break-Even-Menge (Stück)" },
+            { sym: "x_e", desc: "Erwartete Absatzmenge (Stück)" },
+            { sym: "S", desc: "Sicherheitskoeffizient (in %)" },
+            { sym: "\\Delta K_f", desc: "Zusätzliche Fixkosten der Werbemaßnahme (€)" },
+            { sym: "\\Delta x", desc: "Durch die Werbung erwartete zusätzliche Absatzmenge" },
+            { sym: "\\Delta G", desc: "Änderung des Gewinns durch die Maßnahme (€)" },
+          ]}
+          formulas={[
+            { expr: "d = p - k_v,\\quad x_b = K_f / d", desc: "Stückdeckungsbeitrag und Break-Even-Menge als Ausgangsgrößen." },
+            { expr: "S = \\dfrac{x_e - x_b}{x_e}\\cdot 100\\,\\%", desc: "Sicherheitskoeffizient: relative Pufferzone des erwarteten Absatzes über dem BE." },
+            { expr: "\\Delta G = d\\cdot \\Delta x - \\Delta K_f", desc: "Gewinneffekt der Werbemaßnahme: zusätzlicher DB minus zusätzliche Fixkosten." },
+          ]}
+          notes={<p>Empfehlung: Maßnahme nur durchführen, wenn ΔG &gt; 0.</p>}
+        />
       }
       form={
         <div className="space-y-4">

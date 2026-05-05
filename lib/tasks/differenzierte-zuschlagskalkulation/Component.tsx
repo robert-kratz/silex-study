@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, pct, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -178,13 +179,27 @@ export function DiffZuschlagComponent({
         </div>
       }
       learnHelp={
-        <div className="space-y-2">
-          <Formula expr="\text{Materialkosten} = MEK + MEK\cdot MGK\%" />
-          <Formula expr="\text{Fertigungskosten} = \sum_i\bigl(FEK_i + FEK_i\cdot FGK\%_i\bigr) + SEK_F" />
-          <Formula expr="HK = \text{Materialkosten} + \text{Fertigungskosten}" />
-          <Formula expr="SK = HK + HK\cdot VwGK\% + HK\cdot VtGK\% + SEK_{Vt}" />
-          <p className="text-xs text-muted-foreground">Toleranz pro Feld ±0,50&nbsp;€.</p>
-        </div>
+        <LearnLegend
+          intro="Differenzierte Zuschlagskalkulation: Für jeden Auftrag werden Material- und Fertigungskosten separat hochgerechnet, Sondereinzelkosten direkt zugeschlagen. Aus den Herstellkosten ergeben sich über Verwaltung, Vertrieb und Sondereinzelkosten Vertrieb die Selbstkosten."
+          variables={[
+            { sym: "MEK", desc: "Materialeinzelkosten (€) – direkt zurechenbarer Materialverbrauch" },
+            { sym: "MGK\\%", desc: "Materialgemeinkostenzuschlag (in % von MEK)" },
+            { sym: "FEK_i", desc: "Fertigungseinzelkosten der Fertigungsstufe i (€)" },
+            { sym: "FGK\\%_i", desc: "Fertigungsgemeinkostenzuschlag der Stufe i (in % von FEK_i)" },
+            { sym: "SEK_F", desc: "Sondereinzelkosten der Fertigung (€)" },
+            { sym: "HK", desc: "Herstellkosten = Material- + Fertigungskosten (€)" },
+            { sym: "VwGK\\%, VtGK\\%", desc: "Verwaltungs-/Vertriebsgemeinkostenzuschläge (in % der HK)" },
+            { sym: "SEK_{Vt}", desc: "Sondereinzelkosten des Vertriebs (€)" },
+            { sym: "SK", desc: "Selbstkosten des Auftrags (€)" },
+          ]}
+          formulas={[
+            { expr: "\\text{Materialkosten} = MEK + MEK\\cdot MGK\\%", desc: "Materialkosten = Materialeinzelkosten plus prozentualer Materialgemeinkostenzuschlag." },
+            { expr: "\\text{Fertigungskosten} = \\sum_i\\bigl(FEK_i + FEK_i\\cdot FGK\\%_i\\bigr) + SEK_F", desc: "Fertigungskosten je Stufe (FEK + Zuschlag) summiert plus Sondereinzelkosten Fertigung." },
+            { expr: "HK = \\text{Materialkosten} + \\text{Fertigungskosten}", desc: "Herstellkosten als Summe aus Material- und Fertigungskosten." },
+            { expr: "SK = HK + HK\\cdot VwGK\\% + HK\\cdot VtGK\\% + SEK_{Vt}", desc: "Selbstkosten: HK plus Verw./Vertriebsanteile plus Sondereinzelkosten Vertrieb." },
+          ]}
+          notes={<p className="text-xs">Toleranz pro Feld ±0,50&nbsp;€.</p>}
+        />
       }
       form={
         <div className="overflow-x-auto">

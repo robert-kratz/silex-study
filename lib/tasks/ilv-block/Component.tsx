@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -112,10 +113,20 @@ export function IlvBlockComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="k_j = \dfrac{PK_j}{\sum_{i\in\text{End}} x_{ji}}" />
-          <p className="text-sm">V↔V-Leistungen werden bei der Blockumlage <strong>nicht</strong> berücksichtigt.</p>
-        </>
+        <LearnLegend
+          intro="Innerbetriebliche Leistungsverrechnung mit dem Blockverfahren: Wechselseitige Leistungen zwischen den Vorkostenstellen werden ignoriert; verrechnet wird ausschließlich auf die Endkostenstellen."
+          variables={[
+            { sym: "j", desc: "Index der Vorkostenstelle" },
+            { sym: "PK_j", desc: "Primäre Kosten der Vorkostenstelle j (€)" },
+            { sym: "x_{ji}", desc: "Leistung von Stelle j an Endkostenstelle i" },
+            { sym: "k_j", desc: "Verrechnungspreis je Leistungseinheit der Stelle j (€)" },
+            { sym: "E_i", desc: "Belastung der Endkostenstelle i (€)" },
+          ]}
+          formulas={[
+            { expr: "k_j = \\dfrac{PK_j}{\\sum_{i\\in\\text{End}} x_{ji}}", desc: "Verrechnungspreis = Primärkosten geteilt durch Summe der an Endstellen abgegebenen Leistungen." },
+          ]}
+          notes={<p>Wichtig: V ↔ V-Leistungen werden im Blockverfahren <strong>nicht</strong> berücksichtigt – daher der „Block“.</p>}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">

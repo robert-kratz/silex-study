@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -158,13 +159,19 @@ export function IlvAufstellenComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="x_j\,k_j = PK_j + \sum_{i\ne j} (V_i\to V_j)\,k_i" />
-          <p className="text-sm">
-            Pro Gleichung gehören genau drei Bausteine auf die rechte Seite: das jeweilige PK plus
-            die zwei eingehenden Verrechnungsterme.
-          </p>
-        </>
+        <LearnLegend
+          intro="Aufstellen der Gleichungen für die ILV mittels Gleichungsverfahren: Für jede Vorkostenstelle wird eine Bilanzgleichung formuliert, die ihre Gesamtleistung mit ihren Primärkosten und den von anderen Stellen empfangenen Leistungen ausgleicht."
+          variables={[
+            { sym: "x_j", desc: "Gesamtleistung der Vorkostenstelle j" },
+            { sym: "k_j", desc: "Verrechnungspreis je Leistungseinheit der Stelle j (€)" },
+            { sym: "PK_j", desc: "Primärkosten der Stelle j (€)" },
+            { sym: "V_i \\to V_j", desc: "Leistung, die Stelle i an Stelle j abgibt" },
+          ]}
+          formulas={[
+            { expr: "x_j\\,k_j = PK_j + \\sum_{i\\ne j} (V_i\\to V_j)\\,k_i", desc: "Bilanzgleichung jeder Vorkostenstelle: linke Seite = Wert der eigenen Leistung, rechte Seite = Primärkosten plus Wert empfangener Leistungen." },
+          ]}
+          notes={<p>Pro Gleichung gehören genau drei Bausteine auf die rechte Seite: das jeweilige PK plus die zwei eingehenden Verrechnungsterme.</p>}
+        />
       }
       form={
         <div className="space-y-6">

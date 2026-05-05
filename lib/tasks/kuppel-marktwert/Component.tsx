@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -106,10 +107,20 @@ export function KuppelMarktwertComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="\text{Anteil}_i = \dfrac{E_i}{\sum_j E_j} \cdot K" />
-          <Formula expr="k_i = \dfrac{\text{Anteil}_i}{Menge_i}" />
-        </>
+        <LearnLegend
+          intro="Kuppelkalkulation – Marktwertmethode: Die Gesamtkosten werden den Produkten proportional zu ihrem Marktwert (Erlös) zugeschlüsselt."
+          variables={[
+            { sym: "K", desc: "Gesamte Kuppelkosten (€)" },
+            { sym: "E_i", desc: "Marktwert / Erlös des Produkts i (€)" },
+            { sym: "\\text{Anteil}_i", desc: "Auf Produkt i entfallende Kosten (€)" },
+            { sym: "Menge_i", desc: "Produzierte Menge des Produkts i" },
+            { sym: "k_i", desc: "Stückkosten des Produkts i (€/Stück)" },
+          ]}
+          formulas={[
+            { expr: "\\text{Anteil}_i = \\dfrac{E_i}{\\sum_j E_j} \\cdot K", desc: "Verteile die Kuppelkosten im Verhältnis der Marktwerte („Trägerleistung“)." },
+            { expr: "k_i = \\dfrac{\\text{Anteil}_i}{Menge_i}", desc: "Stückkosten = zugewiesener Anteil dividiert durch Produktmenge." },
+          ]}
+        />
       }
       form={
         <div className="space-y-4">

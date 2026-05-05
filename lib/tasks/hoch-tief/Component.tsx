@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -113,11 +114,21 @@ export function HochTiefComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="k_{var} = \dfrac{K_{hoch} - K_{tief}}{x_{hoch} - x_{tief}}" />
-          <Formula expr="K_{fix} = K_{tief} - k_{var}\cdot x_{tief}" />
-          <Formula expr="K(x_{neu}) = K_{fix} + k_{var}\cdot x_{neu}" />
-        </>
+        <LearnLegend
+          intro="Hoch-/Tiefpunktverfahren: Aus der höchsten und niedrigsten beobachteten Beschaftigungsmenge wird eine lineare Kostenfunktion geschätzt und für Prognosen genutzt."
+          variables={[
+            { sym: "x_{hoch}, x_{tief}", desc: "Höchste / niedrigste beobachtete Menge (Stück)" },
+            { sym: "K_{hoch}, K_{tief}", desc: "Zugehörige Gesamtkosten (€)" },
+            { sym: "k_{var}", desc: "Variable Stückkosten = Steigung der Kostengerade (€/Stück)" },
+            { sym: "K_{fix}", desc: "Fixkosten = y-Achsenabschnitt (€)" },
+            { sym: "x_{neu}", desc: "Prognosemenge (Stück)" },
+          ]}
+          formulas={[
+            { expr: "k_{var} = \\dfrac{K_{hoch} - K_{tief}}{x_{hoch} - x_{tief}}", desc: "Steigung aus zwei Punkten: Kostendifferenz pro Mengendifferenz." },
+            { expr: "K_{fix} = K_{tief} - k_{var}\\cdot x_{tief}", desc: "Fixkostenbestimmung durch Einsetzen eines Datenpunktes (alternativ Hochpunkt)." },
+            { expr: "K(x_{neu}) = K_{fix} + k_{var}\\cdot x_{neu}", desc: "Prognose: Kostenfunktion mit gefundener Steigung und Achsenabschnitt auswerten." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-3">

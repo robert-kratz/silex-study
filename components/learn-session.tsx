@@ -20,6 +20,7 @@ import {
   type SRSCardState,
   type SRSRating,
 } from "@/lib/srs";
+import { LearnModeContext } from "@/lib/learn-mode-context";
 import type { AnyTaskDefinition, TaskToken } from "@/lib/tasks/types";
 
 interface LearnSessionProps {
@@ -159,14 +160,16 @@ export function LearnSession({
 
       <div className="mt-6">
         {/* Render the task component as it would render on its own page. */}
-        <slot.task.Component
-          key={`${slot.task.kind}:${slot.seed}`}
-          params={slot.params}
-          solution={slot.solution}
-          seed={slot.seed}
-          shareUrl={slot.shareUrl}
-          courseId={courseId}
-        />
+        <LearnModeContext.Provider value={true}>
+          <slot.task.Component
+            key={`${slot.task.kind}:${slot.seed}`}
+            params={slot.params}
+            solution={slot.solution}
+            seed={slot.seed}
+            shareUrl={slot.shareUrl}
+            courseId={courseId}
+          />
+        </LearnModeContext.Provider>
       </div>
 
       <RatingGate

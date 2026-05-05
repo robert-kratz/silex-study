@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -135,13 +136,28 @@ export function DbStufenComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="DB^I = (p - k_{var})\cdot x" />
-          <Formula expr="DB^{II} = DB^I - K_{fix}^{Produkt}" />
-          <Formula expr="DB^{III} = \sum DB^{II} - K_{fix}^{Produktgruppe}" />
-          <Formula expr="DB^{IV} = \sum DB^{III} - K_{fix}^{Sparte}" />
-          <Formula expr="BE = \sum DB^{IV} - K_{fix}^{Unternehmen}" />
-        </>
+        <LearnLegend
+          intro="Mehrstufige Deckungsbeitragsrechnung: Schrittweise werden Fixkostenblöcke abgezogen, die der jeweiligen Bezugsebene (Produkt, Produktgruppe, Sparte, Unternehmen) zugerechnet werden können. So bleibt sichtbar, welcher Bereich noch positiv beiträgt."
+          variables={[
+            { sym: "p, k_{var}, x", desc: "Preis, variable Stückkosten, Absatzmenge je Produkt" },
+            { sym: "DB^I", desc: "Produkt-Deckungsbeitrag = Erlös minus variable Kosten (€)" },
+            { sym: "K_{fix}^{Produkt}", desc: "Direkt einem Produkt zurechenbare Fixkosten (€)" },
+            { sym: "DB^{II}", desc: "DB nach Abzug der produktfixen Kosten (€)" },
+            { sym: "K_{fix}^{Produktgruppe}", desc: "Fixkosten einer Produktgruppe (€)" },
+            { sym: "DB^{III}", desc: "DB nach Abzug produktgruppenfixer Kosten (€)" },
+            { sym: "K_{fix}^{Sparte}", desc: "Spartenfixe Kosten (€)" },
+            { sym: "DB^{IV}", desc: "DB nach Abzug spartenfixer Kosten (€)" },
+            { sym: "K_{fix}^{Unternehmen}", desc: "Unternehmensfixe Kosten (€)" },
+            { sym: "BE", desc: "Betriebsergebnis nach Abzug aller Fixkostenblöcke (€)" },
+          ]}
+          formulas={[
+            { expr: "DB^I = (p - k_{var})\\cdot x", desc: "DB I je Produkt = Stückdeckungsbeitrag mal Absatzmenge." },
+            { expr: "DB^{II} = DB^I - K_{fix}^{Produkt}", desc: "DB II: produktfixe Kosten abziehen – zeigt den Beitrag des Produkts." },
+            { expr: "DB^{III} = \\sum DB^{II} - K_{fix}^{Produktgruppe}", desc: "DB III: Summe der DB II der Gruppe minus gruppenfixe Kosten." },
+            { expr: "DB^{IV} = \\sum DB^{III} - K_{fix}^{Sparte}", desc: "DB IV: Summe der DB III der Sparte minus spartenfixe Kosten." },
+            { expr: "BE = \\sum DB^{IV} - K_{fix}^{Unternehmen}", desc: "Betriebsergebnis: Summe aller Sparten-DB IV minus unternehmensfixe Kosten." },
+          ]}
+        />
       }
       form={
         <div className="space-y-4">

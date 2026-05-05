@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -98,10 +99,21 @@ export function MehrproduktBeComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="d_i = p_i - k_{v,i}" />
-          <Formula expr="x_1 = \dfrac{K_f}{d_1 + d_2/v},\quad x_2 = \dfrac{x_1}{v}" />
-        </>
+        <LearnLegend
+          intro="Mehrprodukt-Break-Even: Bei festem Mengenverhältnis der Produkte wird der gemeinsame Break-Even-Punkt aus den Stufen-Deckungsbeiträgen ermittelt."
+          variables={[
+            { sym: "p_i", desc: "Verkaufspreis Produkt i (€/Stück)" },
+            { sym: "k_{v,i}", desc: "Variable Stückkosten Produkt i (€/Stück)" },
+            { sym: "d_i", desc: "Stückdeckungsbeitrag Produkt i (€/Stück)" },
+            { sym: "K_f", desc: "Gemeinsame Periodenfixkosten (€)" },
+            { sym: "v", desc: "Mengenverhältnis x_1 : x_2 (z. B. v = x_1/x_2)" },
+            { sym: "x_1, x_2", desc: "Break-Even-Mengen der Produkte 1 und 2" },
+          ]}
+          formulas={[
+            { expr: "d_i = p_i - k_{v,i}", desc: "Stückdeckungsbeitrag = Preis abzüglich variable Stückkosten." },
+            { expr: "x_1 = \\dfrac{K_f}{d_1 + d_2/v},\\quad x_2 = \\dfrac{x_1}{v}", desc: "Break-Even-Mengen unter konstantem Verhältnis: Fixkosten werden auf einen „gewichteten“ DB umgelegt." },
+          ]}
+        />
       }
       form={
         <div className="space-y-4">

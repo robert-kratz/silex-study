@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -79,11 +80,21 @@ export function IlvGleichungComponent({
         </ul>
       }
       learnHelp={
-        <>
-          <Formula expr="x_1\,k_1 = PK_1 + x_{21}\,k_2" />
-          <Formula expr="x_2\,k_2 = PK_2 + x_{12}\,k_1" />
-          <p className="text-sm">2×2-LGS mit Cramer oder Einsetzen lösen.</p>
-        </>
+        <LearnLegend
+          intro="ILV-Gleichungsverfahren: Wechselseitige Leistungen werden exakt berücksichtigt. Für jede Vorkostenstelle wird eine lineare Gleichung gebildet; das 2×2-System wird mit Cramer oder Einsetzen gelöst."
+          variables={[
+            { sym: "PK_1, PK_2", desc: "Primärkosten der Vorkostenstellen 1 und 2 (€)" },
+            { sym: "x_1, x_2", desc: "Gesamtleistungen der Stellen 1 und 2" },
+            { sym: "x_{12}", desc: "Leistung von Stelle 1 an Stelle 2" },
+            { sym: "x_{21}", desc: "Leistung von Stelle 2 an Stelle 1" },
+            { sym: "k_1, k_2", desc: "Gesuchte Verrechnungspreise (€/Einheit)" },
+          ]}
+          formulas={[
+            { expr: "x_1\\,k_1 = PK_1 + x_{21}\\,k_2", desc: "Wert der eigenen Leistung von Stelle 1 = Primärkosten plus Wert der von 2 empfangenen Leistung." },
+            { expr: "x_2\\,k_2 = PK_2 + x_{12}\\,k_1", desc: "Analoge Bilanz für Stelle 2 – zusammen ein 2×2-LGS, das nach k_1, k_2 aufzulösen ist." },
+          ]}
+          notes={<p>Beide Gleichungen gemeinsam lösen – z. B. mit Cramer’scher Regel oder durch Einsetzen.</p>}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">

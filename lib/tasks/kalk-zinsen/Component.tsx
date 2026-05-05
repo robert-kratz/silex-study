@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, parseLocaleNumber, pct } from "@/lib/tasks/_shared/format";
@@ -118,11 +119,21 @@ export function KalkZinsenComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="\text{BN-Vermögen} = AV_{BN} + UV_{BN}" />
-          <Formula expr="\text{BN-Kapital} = \text{BN-Vermögen} - \text{Abzugskapital}" />
-          <Formula expr="Z_{kalk} = \text{BN-Kapital}\cdot \text{WACC}" />
-        </>
+        <LearnLegend
+          intro="Kalkulatorische Zinsen verrechnen die Kapitalbindung im Betrieb mit einem Mischzinssatz (WACC) auf das betriebsnotwendige Kapital."
+          variables={[
+            { sym: "AV_{BN}", desc: "Betriebsnotwendiges Anlagevermögen (€)" },
+            { sym: "UV_{BN}", desc: "Betriebsnotwendiges Umlaufvermögen (€)" },
+            { sym: "\\text{Abzugskapital}", desc: "Zinslos zur Verfügung stehendes Kapital (z. B. Lieferantenkredite, €)" },
+            { sym: "\\text{WACC}", desc: "Gewichteter durchschnittlicher Kapitalkostensatz (Mischzinssatz)" },
+            { sym: "Z_{kalk}", desc: "Kalkulatorische Zinsen der Periode (€)" },
+          ]}
+          formulas={[
+            { expr: "\\text{BN-Vermögen} = AV_{BN} + UV_{BN}", desc: "Summe des betriebsnotwendigen Vermögens." },
+            { expr: "\\text{BN-Kapital} = \\text{BN-Vermögen} - \\text{Abzugskapital}", desc: "Tatsächlich zu verzinsendes Kapital nach Abzug zinsfreier Mittel." },
+            { expr: "Z_{kalk} = \\text{BN-Kapital}\\cdot \\text{WACC}", desc: "Kalkulatorische Zinsen = BN-Kapital mal Mischzinssatz." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">

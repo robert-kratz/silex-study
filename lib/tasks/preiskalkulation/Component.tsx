@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, pct, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -123,13 +124,28 @@ export function PreiskalkulationComponent({
         </Table>
       }
       learnHelp={
-        <>
-          <Formula expr="\text{Selbstkosten} = HK\cdot(1 + VwGK + VtGK)" />
-          <Formula expr="\text{Gewinn} = SK\cdot g" />
-          <Formula expr="\text{Barverkaufspreis} = SK + \text{Gewinn}" />
-          <Formula expr="\text{Zielverkaufspreis} = \frac{\text{BVP}}{1 - \text{Skonto}}" />
-          <Formula expr="\text{Listenverkaufspreis} = \frac{\text{ZVP}}{1 - \text{Rabatt}}" />
-        </>
+        <LearnLegend
+          intro="Vorwärtskalkulation vom Listenverkaufspreis: Ausgehend von den Herstellkosten werden über Zuschläge die Selbstkosten gebildet, dann Gewinn, Skonto und Rabatt aufgeschlagen."
+          variables={[
+            { sym: "HK", desc: "Herstellkosten des Auftrags (€)" },
+            { sym: "VwGK", desc: "Verwaltungsgemeinkostenzuschlag (in % der HK)" },
+            { sym: "VtGK", desc: "Vertriebsgemeinkostenzuschlag (in % der HK)" },
+            { sym: "SK", desc: "Selbstkosten = HK + Verw./Vertriebsanteil (€)" },
+            { sym: "g", desc: "Gewinnzuschlag in % der Selbstkosten" },
+            { sym: "BVP", desc: "Barverkaufspreis (€); Preis bei sofortiger Zahlung" },
+            { sym: "ZVP", desc: "Zielverkaufspreis (€); Preis nach Skontogewährung" },
+            { sym: "LVP", desc: "Listenverkaufspreis (€); offiziell ausgewiesener Listenpreis" },
+            { sym: "\\text{Skonto}", desc: "Nachlass für frühzeitige Zahlung (in %)" },
+            { sym: "\\text{Rabatt}", desc: "Mengen-/Kundenrabatt (in %)" },
+          ]}
+          formulas={[
+            { expr: "\\text{Selbstkosten} = HK\\cdot(1 + VwGK + VtGK)", desc: "Selbstkosten: Herstellkosten plus prozentuale Verwaltungs- und Vertriebszuschläge." },
+            { expr: "\\text{Gewinn} = SK\\cdot g", desc: "Gewinnaufschlag in Prozent der Selbstkosten." },
+            { expr: "\\text{Barverkaufspreis} = SK + \\text{Gewinn}", desc: "BVP = Selbstkosten plus Gewinn (Preis ohne Preisnachlässe)." },
+            { expr: "\\text{Zielverkaufspreis} = \\frac{\\text{BVP}}{1 - \\text{Skonto}}", desc: "Rückwärtsrechnung des Skontos: BVP entspricht (1 − Skonto) des ZVP." },
+            { expr: "\\text{Listenverkaufspreis} = \\frac{\\text{ZVP}}{1 - \\text{Rabatt}}", desc: "Rückwärtsrechnung des Rabatts: ZVP entspricht (1 − Rabatt) des LVP." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">

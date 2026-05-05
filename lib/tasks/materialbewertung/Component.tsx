@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
 import { cn } from "@/lib/utils";
@@ -128,16 +129,26 @@ export function MaterialbewertungComponent({
         </Table>
       }
       learnHelp={
-        <ul className="list-disc space-y-1 pl-5 text-sm">
-          <li>FIFO: ältester Bestand zuerst verbraucht; Endbestand mit jüngsten Preisen bewertet.</li>
-          <li>Permanentes LIFO: pro Abgang den jüngsten verfügbaren Bestand verbrauchen.</li>
-          <li>Nachträglicher ∅-Preis: ein einziger Periodendurchschnitt bewertet alle Abgänge.</li>
-          <li>Gleitender ∅-Preis: nach jedem Zugang neu rechnen; Abgänge mit dem zuvor gültigen Preis.</li>
-          <li>
-            Kontrolle:
-            <Formula expr="\text{Verbrauch} + \text{Endbestand} = \sum \text{Zugänge (inkl. AB)}" />
-          </li>
-        </ul>
+        <LearnLegend
+          intro="Materialbewertung: Aus Anfangsbestand, Zugängen und Abgängen wird der Wert von Verbrauch und Endbestand bestimmt. Die Wahl des Verfahrens beeinflusst Periodenerfolg und Bilanzansatz."
+          variables={[
+            { sym: "AB", desc: "Anfangsbestand mit Menge und Preis" },
+            { sym: "\\text{Zugang}", desc: "Lagerzugang (Menge × Preis)" },
+            { sym: "\\text{Abgang}", desc: "Verbrauch / Lagerentnahme (Menge)" },
+            { sym: "\\text{Endbestand}", desc: "Verbleibende Lagermenge zum Periodenende" },
+          ]}
+          formulas={[
+            { expr: "\\text{Verbrauch} + \\text{Endbestand} = \\sum \\text{Zugänge (inkl. AB)}", desc: "Mengenkontrolle: was hineinging, ist entweder verbraucht oder noch im Lager." },
+          ]}
+          notes={
+            <ul className="list-disc space-y-1 pl-5">
+              <li><strong>FIFO</strong> (first in, first out): ältester Bestand zuerst verbraucht, Endbestand mit den jüngsten Preisen bewertet.</li>
+              <li><strong>Permanentes LIFO</strong>: bei jedem Abgang den jüngsten verfügbaren Bestand verbrauchen.</li>
+              <li><strong>Nachträglicher ∅-Preis</strong>: ein einziger Periodendurchschnitt bewertet alle Abgänge.</li>
+              <li><strong>Gleitender ∅-Preis</strong>: nach jedem Zugang wird neu gemittelt; Abgänge gehen zum zuletzt gültigen Durchschnitt ab.</li>
+            </ul>
+          }
+        />
       }
       form={
         <div className="space-y-4">

@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, fmt4, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -114,11 +115,22 @@ export function AequivalenzzifferComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="\text{Ä}Z_i = \dfrac{L_i \cdot B_i}{L_{\text{Grund}}\cdot B_{\text{Grund}}}" />
-          <Formula expr="S_i = \text{Stückzahl}_i \cdot \text{Ä}Z_i" />
-          <Formula expr="k_i = \dfrac{K}{\sum_i S_i} \cdot \text{Ä}Z_i" />
-        </>
+        <LearnLegend
+          intro="Äquivalenzziffernkalkulation: für eng verwandte Sorten (z. B. unterschiedliche Größen) werden die Gesamtkosten über Schlüsselzahlen verteilt. Eine Sorte dient als Bezugsgröße (ÄZ = 1)."
+          variables={[
+            { sym: "\\text{Ä}Z_i", desc: "Äquivalenzziffer der Sorte i (Verhältnis zur Grundsorte, dimensionslos)" },
+            { sym: "L_i, B_i", desc: "Kostentreibende Merkmale der Sorte i (z. B. Länge, Breite)" },
+            { sym: "L_{\\text{Grund}}, B_{\\text{Grund}}", desc: "Merkmale der Grund-/Einheitssorte (ÄZ = 1)" },
+            { sym: "S_i", desc: "Schlüsselzahl: in Einheitssorten umgerechnete Stückzahl" },
+            { sym: "K", desc: "Gesamtkosten der Periode (€)" },
+            { sym: "k_i", desc: "Stückkosten der Sorte i (€/Stück)" },
+          ]}
+          formulas={[
+            { expr: "\\text{Ä}Z_i = \\dfrac{L_i \\cdot B_i}{L_{\\text{Grund}}\\cdot B_{\\text{Grund}}}", desc: "Ermittelt das Kostenverhältnis einer Sorte zur Grundsorte aus den kostentreibenden Merkmalen." },
+            { expr: "S_i = \\text{Stückzahl}_i \\cdot \\text{Ä}Z_i", desc: "Rechnet die Sortenmenge in Recheneinheiten der Grundsorte um – ergibt die Schlüsselzahl." },
+            { expr: "k_i = \\dfrac{K}{\\sum_i S_i} \\cdot \\text{Ä}Z_i", desc: "Stückkosten je Sorte: Gesamtkosten pro Recheneinheit, gewichtet mit der Äquivalenzziffer." },
+          ]}
+        />
       }
       form={
         <div className="space-y-4">

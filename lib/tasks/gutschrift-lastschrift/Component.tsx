@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -85,11 +86,24 @@ export function GutschriftLastschriftComponent({
         </ul>
       }
       learnHelp={
-        <>
-          <Formula expr="G_j = vp_j \cdot x_j" />
-          <Formula expr="L_j = PK_j + \sum_{i\ne j} x_{ij}\,vp_i" />
-          <Formula expr="S_j = L_j - G_j" />
-        </>
+        <LearnLegend
+          intro="Innerbetriebliche Leistungsverrechnung mit Gutschrift-/Lastschriftverfahren: Jede Vorkostenstelle wird für die abgegebene Leistung gutgeschrieben und für die empfangene Leistung belastet. Der Saldo zeigt die Nettobelastung."
+          variables={[
+            { sym: "j", desc: "Index der betrachteten Vorkostenstelle" },
+            { sym: "vp_j", desc: "Verrechnungspreis der Stelle j (€/Einheit)" },
+            { sym: "x_j", desc: "Gesamtleistung der Stelle j (Einheiten)" },
+            { sym: "x_{ij}", desc: "Leistung, die Stelle i an Stelle j abgibt" },
+            { sym: "PK_j", desc: "Primäre Kosten der Stelle j (€)" },
+            { sym: "G_j", desc: "Gutschrift: Wert der von j abgegebenen Leistung (€)" },
+            { sym: "L_j", desc: "Lastschrift: primäre Kosten plus Wert empfangener Leistungen (€)" },
+            { sym: "S_j", desc: "Saldo der Stelle j (€); im Idealfall ≈ 0" },
+          ]}
+          formulas={[
+            { expr: "G_j = vp_j \\cdot x_j", desc: "Gutschrift = abgegebene Leistung bewertet zum Verrechnungspreis." },
+            { expr: "L_j = PK_j + \\sum_{i\\ne j} x_{ij}\\,vp_i", desc: "Lastschrift = eigene Primärkosten plus Wert der von anderen Stellen empfangenen Leistungen." },
+            { expr: "S_j = L_j - G_j", desc: "Saldo = Belastung minus Entlastung. Korrekte Verrechnungspreise führen zu S_j = 0." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">

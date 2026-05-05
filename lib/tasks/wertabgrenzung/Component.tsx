@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { cn } from "@/lib/utils";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { eur, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -113,17 +114,19 @@ export function WertabgrenzungComponent({
         </ol>
       }
       learnHelp={
-        <>
-          <p className="text-sm">
-            <span className="font-medium">Zusatzkosten:</span> Kosten ohne entsprechenden Aufwand
-            (z. B. kalk. Unternehmerlohn).
-          </p>
-          <p className="text-sm">
-            <span className="font-medium">Anderskosten:</span> Kosten in anderer Höhe als der Aufwand
-            (z. B. kalk. Abschreibung &gt; bilanzielle AfA).
-          </p>
-          <Formula expr="\text{Aufwand} \subseteq \text{HGB}\quad\text{Kosten} \subseteq \text{Sachziel}" />
-        </>
+        <LearnLegend
+          intro="Abgrenzung von Aufwand und Kosten: Aufwendungen folgen handelsrechtlichen Vorschriften, Kosten dem betrieblichen Sachziel. Daraus ergeben sich Zusatz- und Anderskosten als kalkulatorische Korrekturen."
+          variables={[
+            { sym: "\\text{Aufwand}", desc: "Periodisierter Werteverzehr nach HGB / IFRS" },
+            { sym: "\\text{Kosten}", desc: "Bewerteter, betriebszielbezogener Werteverzehr" },
+            { sym: "\\text{Zusatzkosten}", desc: "Kosten ohne entsprechenden Aufwand (z. B. kalk. Unternehmerlohn)" },
+            { sym: "\\text{Anderskosten}", desc: "Kosten in anderer Höhe als der zugehörige Aufwand (z. B. kalk. Abschreibung > bilanzielle AfA)" },
+          ]}
+          formulas={[
+            { expr: "\\text{Aufwand} \\subseteq \\text{HGB}\\quad\\text{Kosten} \\subseteq \\text{Sachziel}", desc: "Konzeptionelle Trennung: extern bilanziell vs. intern entscheidungsorientiert." },
+          ]}
+          notes={<p>Faustregel: Was ist betriebszielbezogen und periodengerecht? Nur das gehört zu den Kosten.</p>}
+        />
       }
       form={
         <div className="overflow-x-auto">

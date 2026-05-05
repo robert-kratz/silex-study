@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { cn } from "@/lib/utils";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { eur, fmt, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -115,12 +116,25 @@ export function AbschreibungsplanComponent({
         </div>
       }
       learnHelp={
-        <div className="space-y-2 text-sm">
-          <Formula expr="\text{Linear: }\;\text{AfA} = \dfrac{AW - RW}{T}" />
-          <Formula expr="\text{Geom.-degr.: }\;\text{AfA}_t = q\cdot BW_{t-1}" />
-          <Formula expr="\text{Arith.-degr.: }\;d = \dfrac{AW - RW}{\sum_{i=1}^{T} i},\; \text{AfA}_t = (T - t + 1)\cdot d" />
-          <Formula expr="\text{Leistung: }\;\text{AfA}_t = \dfrac{AW - RW}{\text{Gesamtleistung}}\cdot L_t" />
-        </div>
+        <LearnLegend
+          intro="Abschreibungsplan: Verteilung des Werteverzehrs einer Anlage über die Nutzungsdauer. Je nach Verfahren werden gleiche, fallende oder leistungsabhängige Beiträge gebildet."
+          variables={[
+            { sym: "AW", desc: "Anschaffungswert der Anlage (€)" },
+            { sym: "RW", desc: "Restwert am Ende der Nutzungsdauer (€)" },
+            { sym: "T", desc: "Nutzungsdauer (Perioden)" },
+            { sym: "BW_{t-1}", desc: "Buchwert am Ende der Vorperiode (€)" },
+            { sym: "q", desc: "Konstanter Abschreibungssatz beim geometrisch-degressiven Verfahren" },
+            { sym: "d", desc: "Degressionsbetrag beim arithmetisch-degressiven Verfahren" },
+            { sym: "L_t", desc: "In Periode t erbrachte Leistung" },
+            { sym: "\\text{AfA}_t", desc: "Abschreibungsbetrag der Periode t (€)" },
+          ]}
+          formulas={[
+            { expr: "\\text{Linear: }\\;\\text{AfA} = \\dfrac{AW - RW}{T}", desc: "Linear: gleicher AfA-Betrag pro Periode – abschreibbarer Betrag durch Nutzungsdauer." },
+            { expr: "\\text{Geom.-degr.: }\\;\\text{AfA}_t = q\\cdot BW_{t-1}", desc: "Geometrisch-degressiv: konstanter Prozentsatz auf den jeweiligen Buchwert; AfA-Betrag sinkt im Zeitverlauf." },
+            { expr: "\\text{Arith.-degr.: }\\;d = \\dfrac{AW - RW}{\\sum_{i=1}^{T} i},\\; \\text{AfA}_t = (T - t + 1)\\cdot d", desc: "Arithmetisch-degressiv: konstanter Degressionsbetrag d, AfA fällt linear („Digitalmethode“)." },
+            { expr: "\\text{Leistung: }\\;\\text{AfA}_t = \\dfrac{AW - RW}{\\text{Gesamtleistung}}\\cdot L_t", desc: "Leistungsabhängig: Wertminderung proportional zur tatsächlich erbrachten Leistung." },
+          ]}
+        />
       }
       form={
         <div className="overflow-x-auto">

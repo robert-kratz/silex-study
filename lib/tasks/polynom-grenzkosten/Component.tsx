@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { Formula } from "@/components/Formula";
+import { LearnLegend } from "@/lib/tasks/_shared/LearnLegend";
 import { TaskShell } from "@/lib/tasks/_shared/TaskShell";
 import { FieldRow } from "@/lib/tasks/_shared/FieldRow";
 import { eur, parseLocaleNumber } from "@/lib/tasks/_shared/format";
@@ -83,10 +84,19 @@ export function PolynomGrenzkostenComponent({
         </div>
       }
       learnHelp={
-        <>
-          <Formula expr="K'(x) = b - 2c\,x + 3d\,x^{2}" />
-          <Formula expr="k(x) = \dfrac{K(x)}{x}" />
-        </>
+        <LearnLegend
+          intro="Polynomiale Kostenfunktion 3. Grades: Aus K(x) lassen sich Grenzkosten K′(x) als 1. Ableitung und durchschnittliche Stückkosten k(x) durch Division ableiten."
+          variables={[
+            { sym: "K(x)", desc: "Gesamtkosten als Funktion der Menge: a + b\u202fx − c\u202fx² + d\u202fx\u00b3" },
+            { sym: "a, b, c, d", desc: "Konstante / lineare / quadratische / kubische Koeffizienten" },
+            { sym: "K'(x)", desc: "Grenzkosten = 1. Ableitung von K nach x (€/Stück)" },
+            { sym: "k(x)", desc: "Durchschnittliche Stückkosten = K(x)/x (€/Stück)" },
+          ]}
+          formulas={[
+            { expr: "K'(x) = b - 2c\\,x + 3d\\,x^{2}", desc: "1. Ableitung gibt die Kostensteigerung pro zusätzlich produzierter Einheit." },
+            { expr: "k(x) = \\dfrac{K(x)}{x}", desc: "Durchschnittliche Stückkosten: Gesamtkosten auf die Menge umgelegt." },
+          ]}
+        />
       }
       form={
         <div className="grid gap-4 sm:grid-cols-2">
